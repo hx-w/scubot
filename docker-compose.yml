@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  redis:
+    image: redis:latest
+    restart: always
+    container_name: redis
+    expose:
+      - 6379
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./configs/redis.conf:/etc/redis/redis.conf
+      - ./data/redis-data:/data
+    command: redis-server /etc/redis/redis.conf
+
+  go-cqhttp:
+    image: dark15/go-cqhttp
+    restart: always
+    container_name: go-cqhttp
+    depends_on:
+      - nonebot
+    volumes:
+      - ./configs/go-cqhttp.yml:/app/config.yml
+      - ./data/go-cqhttp/logs:/app/logs
+      - ./data/go-cqhttp/data:/app/data
+
+  nonebot:
+    build: ./nonebot
+    restart: always
+    container_name: nonebot
+    environment:
+      - TZ=Asia/Shanghai
+    expose:
+      - 9999
+    volumes:
+      - ./configs:/var/lib/scubot
+      - ./nonebot:/root/nonebot/
+    command: python3 /root/nonebot/bot.py
