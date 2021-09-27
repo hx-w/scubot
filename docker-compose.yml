@@ -11,7 +11,7 @@ services:
       TZ: Asia/Shanghai
     volumes:
       - ./data/redis-data:/data
-      - ./configs/redis.conf:/etc/redis/redis.conf
+      - ./configs/redis.conf:/etc/redis/redis.conf:ro
     command: redis-server /etc/redis/redis.conf
 
   go-cqhttp:
@@ -23,7 +23,7 @@ services:
     volumes:
       - ./data/go-cqhttp/data:/app/data
       - ./data/go-cqhttp/logs:/app/logs
-      - ./configs/go-cqhttp.yml:/app/config.yml
+      - ./configs/go-cqhttp.yml:/app/config.yml:ro
 
   nonebot:
     build: ./nonebot
