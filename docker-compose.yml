@@ -10,8 +10,8 @@ services:
     environment:
       TZ: Asia/Shanghai
     volumes:
-      - ./configs/redis.conf:/etc/redis/redis.conf
       - ./data/redis-data:/data
+      - ./configs/redis.conf:/etc/redis/redis.conf
     command: redis-server /etc/redis/redis.conf
 
   go-cqhttp:
@@ -21,9 +21,9 @@ services:
     depends_on:
       - nonebot
     volumes:
-      - ./configs/go-cqhttp.yml:/app/config.yml
-      - ./data/go-cqhttp/logs:/app/logs
       - ./data/go-cqhttp/data:/app/data
+      - ./data/go-cqhttp/logs:/app/logs
+      - ./configs/go-cqhttp.yml:/app/config.yml
 
   nonebot:
     build: ./nonebot
@@ -33,7 +33,7 @@ services:
       - TZ=Asia/Shanghai
     expose:
       - 9999
-    volumes:
-      - ./configs:/var/lib/scubot
-      - ./nonebot:/root/nonebot/
-    command: python3 /root/nonebot/bot.py
+    # volumes:
+    #   - ./configs:/var/lib/scubot
+    #   - ./nonebot:/root/nonebot/
+    command: python3 bot.py

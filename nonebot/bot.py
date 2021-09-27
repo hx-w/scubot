@@ -4,7 +4,7 @@ import sys
 sys.path.append('/var/lib/scubot')
 
 try:
-    import nonebot_config as config
+    import config
 except:
     import nonebot.default_config as config
 
