@@ -26,6 +26,14 @@ async def handler_register(bot: nonebot.NoneBot, event: aiocqhttp.Event):
     success = await scu_session.session_login(qq_key)
     if success:
         await bot.send_private_msg(user_id=event.user_id, message='验证成功')
+        std_info = await scu_session.session_student_info(qq_key)
+        if std_info == {}: return
+        course_list = await scu_session.session_course_list(qq_key)
+        if course_list == {}: return
+        message = f'{std_info["xs"]["XM"]} 你好\n\n你当前的选课有：'
+        for course_ in course_list['xkjgList']:
+            message += f'\n{course_["KCMC"]}({course_["RKJS"]})'
+        await bot.send_private_msg(user_id=event.user_id, message=message)
     else:
         await bot.send_private_msg(user_id=event.user_id, message='cookies无效')
 
@@ -52,6 +60,6 @@ async def handler_check(bot: nonebot.NoneBot, event: aiocqhttp.Event):
 
 
 async def handler_check_all():
-    all_keys = redis_utils.get_all_keys()
+    all_keys = await redis_utils.get_all_keys()
     for qq_key in all_keys:
         await scu_session.session_login(qq_key)

@@ -9,7 +9,8 @@ def is_json(content: str) -> bool:
         return False
 
 def test_request():
-    url = 'http://ehall.scu.edu.cn/yjsxkapp/sys/xsxkapp/xsxkCourse/loadKbxx.do'
+    # url = 'http://ehall.scu.edu.cn/yjsxkapp/sys/xsxkapp/xsxkCourse/loadKbxx.do'
+    url = 'http://ehall.scu.edu.cn/jsonp/getTaskMessageCount'
     session = requests.session()
 
     header = {
@@ -17,7 +18,9 @@ def test_request():
     }
 
     manual_cookies = {
-        'XK_TOKEN': ''
+        'AUTHTGC': 'fm3gEuS4l4qio8Q9rcsZ0K8qcu85h/fNK8lVFpDirm+UCsQAPlfA0w==',
+        'MOD_AMP_AUTH': 'MOD_AMP_fd1f22a3-6dd7-473e-a0d5-bada4c7cc65d',
+        
     }
 
     cookiesJar = requests.utils.cookiejar_from_dict(manual_cookies, cookiejar=None, overwrite=True)
@@ -27,7 +30,7 @@ def test_request():
     resp = session.get(url, headers=header)
 
     assert resp.status_code == 200
-    assert is_json(resp.content.decode())
+    assert is_json(resp.content.decode()), resp.content.decode()
 
 
 if __name__ == '__main__':
