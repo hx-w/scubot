@@ -13,6 +13,7 @@ redis_inst: redis.Redis = None
 async def on_connect(event: aiocqhttp.Event):
     global redis_inst
     redis_inst = redis.Redis(host='redis', port=6379, decode_responses=True)
+    print(f'[on_websocket_connect] {redis_inst}')
 
 
 @bot.on_message('private')
