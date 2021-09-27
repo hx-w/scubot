@@ -15,15 +15,15 @@ services:
     command: redis-server /etc/redis/redis.conf
 
   go-cqhttp:
-    image: dark15/go-cqhttp
+    image: silicer/go-cqhttp
     restart: always
     container_name: go-cqhttp
     depends_on:
       - nonebot
     volumes:
-      - ./data/go-cqhttp/data:/app/data
-      - ./data/go-cqhttp/logs:/app/logs
-      - ./configs/go-cqhttp.yml:/app/config.yml:ro
+      - ./data/go-cqhttp/data:/data/data
+      - ./data/go-cqhttp/logs:/data/logs
+      - ./configs/go-cqhttp.yml:/data/config.yml:ro
 
   nonebot:
     build: ./nonebot
