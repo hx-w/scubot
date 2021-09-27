@@ -20,9 +20,10 @@ def test_request():
         'XK_TOKEN': ''
     }
 
-    cookiesJar = requests.utils.cookiejar_from_dict(manual_cookies, cookiejar=None,overwrite=True)
+    cookiesJar = requests.utils.cookiejar_from_dict(manual_cookies, cookiejar=None, overwrite=True)
 
     session.cookies = cookiesJar
+    print(type(cookiesJar))
     resp = session.get(url, headers=header)
 
     assert resp.status_code == 200
