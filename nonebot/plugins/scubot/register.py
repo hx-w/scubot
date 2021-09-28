@@ -12,30 +12,48 @@ async def handler_register(bot: nonebot.NoneBot, event: aiocqhttp.Event):
     if event.message[0]['type'] != 'text':
         return
 
-    raw_message: str = event.message[0]['data']['text'].strip()
-    message_split: list[str] = raw_message.split(' ')
-    if len(message_split) != 2:
-        return
-    if message_split[0] not in ['绑定', 'bind']:
-        return
-    xk_token = message_split[1]
     qq_key = str(event.user_id)
+
+    raw_message: str = event.message[0]['data']['text'].strip()
+    if 'XK_TOKEN' not in raw_message: return
+    raw_message = raw_message.replace(';', '')
+
+    message_split: list[str] = raw_message.split(' ')
+    print('message_split: ', message_split)
+    cookies_dict = {}
+    for line in message_split:
+        print(line)
+        key, value = line.split('=', 1)
+        cookies_dict[key] = value
     # save to redis
-    await redis_utils.save_cookies(qq_key, {'XK_TOKEN': xk_token})
+    await redis_utils.save_cookies(qq_key, cookies_dict)
     await scu_session.add_session_dict(qq_key)
-    success = await scu_session.session_login(qq_key)
-    if success:
-        await bot.send_private_msg(user_id=event.user_id, message='验证成功')
-        std_info = await scu_session.session_student_info(qq_key)
-        if std_info == {}: return
-        course_list = await scu_session.session_course_list(qq_key)
-        if course_list == {}: return
-        message = f'{std_info["xs"]["XM"]} 你好\n\n你当前的选课有：'
-        for course_ in course_list['xkjgList']:
-            message += f'\n{course_["KCMC"]}({course_["RKJS"]})'
-        await bot.send_private_msg(user_id=event.user_id, message=message)
-    else:
+
+    std_info = await scu_session.get_student_info(qq_key)
+    if std_info == {}:
         await bot.send_private_msg(user_id=event.user_id, message='cookies无效')
+        return
+    std_name = std_info['xsInfoList'][0]['XM']
+    std_id = std_info['xsInfoList'][0]['XH']
+    success = await scu_session.get_student_picture(qq_key, str(std_id))
+    if success:
+        await bot.send_private_msg(user_id=event.user_id, message=f'{std_name} 你好\n' + nonebot.MessageSegment.image(file=f'file://{std_id}.jpg'))
+    else:
+        await bot.send_private_msg(user_id=event.user_id, message=f'{std_name} 你好')    
+
+    # success = await scu_session.session_login(qq_key)
+    # if success:
+    #     await bot.send_private_msg(user_id=event.user_id, message='验证成功')
+    #     std_info = await scu_session.session_student_info(qq_key)
+    #     if std_info == {}: return
+    #     course_list = await scu_session.session_course_list(qq_key)
+    #     if course_list == {}: return
+    #     message = f'{std_info["xs"]["XM"]} 你好\n\n你当前的选课有：'
+    #     for course_ in course_list['xkjgList']:
+    #         message += f'\n{course_["KCMC"]}({course_["RKJS"]})'
+    #     await bot.send_private_msg(user_id=event.user_id, message=message)
+    # else:
+    #     await bot.send_private_msg(user_id=event.user_id, message='cookies无效')
 
 
 async def handler_check(bot: nonebot.NoneBot, event: aiocqhttp.Event):

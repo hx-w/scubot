@@ -16,4 +16,5 @@ async def handler_on_message(event: aiocqhttp.Event):
 
 @nonebot.scheduler.scheduled_job('interval', minutes=10)
 async def handler_timer():
-    await register.handler_check_all()
+    # await register.handler_check_all()
+    pass
