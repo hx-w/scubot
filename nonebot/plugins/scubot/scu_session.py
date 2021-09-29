@@ -42,12 +42,12 @@ async def get_student_info(qq_key: str) -> dict:
     global session_dict
     try:
         cookiesJar = requests.utils.cookiejar_from_dict(
-            (await redis_utils.get_cookies(qq_key))[1], cookiejar=None, overwrite=True)
+            (await redis_utils.get_cookies(qq_key))[1], overwrite=True)
         session_dict[qq_key].cookies = cookiesJar
         url = 'http://ehall.scu.edu.cn/gsapp/sys/wdxj/xjqx/getxsinfo.do'
-        resp = session_dict[qq_key].get(url=url, headers=headers)
+        resp = session_dict[qq_key].post(url=url, headers=headers)
         if resp.status_code != 200:
-            print('[ERROR] response in <session_student_info> is %d' %
+            print('[ERROR] response in <get_student_info> is %d' %
                   resp.status_code)
             return {}
         redis_utils.save_cookies(
@@ -70,7 +70,7 @@ async def get_student_picture(qq_key: str, std_id: str) -> bool:
         url = f'http://ehall.scu.edu.cn/gsapp/sys/zpglyy/showImageByds.do?XH={std_id}&&ZPLX=XJZP'
         resp = session_dict[qq_key].get(url=url, headers=headers)
         if resp.status_code != 200:
-            print('[ERROR] response in <session_course_list> is %d' %
+            print('[ERROR] response in <get_student_picture> is %d' %
                   resp.status_code)
             return False
         redis_utils.save_cookies(

@@ -15,16 +15,14 @@ async def handler_register(bot: nonebot.NoneBot, event: aiocqhttp.Event):
     qq_key = str(event.user_id)
 
     raw_message: str = event.message[0]['data']['text'].strip()
-    if 'XK_TOKEN' not in raw_message: return
-    raw_message = raw_message.replace(';', '')
-
-    message_split: list[str] = raw_message.split(' ')
-    print('message_split: ', message_split)
+    if 'route' not in raw_message: return
     cookies_dict = {}
-    for line in message_split:
-        print(line)
-        key, value = line.split('=', 1)
-        cookies_dict[key] = value
+    try:
+        for line in raw_message.split(';'):
+            key, value = line.split('=', 1)
+            cookies_dict[key] = value
+    except:
+        return
     # save to redis
     await redis_utils.save_cookies(qq_key, cookies_dict)
     await scu_session.add_session_dict(qq_key)

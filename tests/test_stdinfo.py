@@ -10,11 +10,13 @@ def test_request():
     for line in cookies_str.split(';'):
         key, value = line.split('=', 1)
         cookies_dict[key] = value
-    session.cookies = requests.utils.cookiejar_from_dict(
-        cookies_dict, overwrite=True)
+    session.cookies = requests.utils.cookiejar_from_dict(cookies_dict, overwrite=True)
 
-    url = 'http://ehall.scu.edu.cn/gsapp/sys/wdxj/xjqx/getxsinfo.do'
-    resp = session.get(url=url)
+    url = 'http://ehall.scu.edu.cn/gsapp/sys/wdxj/xjqx/getXsInfo.do'
+    headers = {
+        # 'Referer': 'http://ehall.scu.edu.cn/gsapp/sys/wdxj/*default/index.do?t_s=1632811177273&amp_sec_version_=1&gid_=M3p4TFA3RWhSY3NpWUZPZG1NK1F4Wm1nKzFBaFpMR1Z2cGZIdk1XQWhyaGliQkRnNGE4NS82MVNocFhQL1lOUDZTZ2hPeUxxL0xQL2V5SHV5SGhzaEE9PQ&EMAP_LANG=zh&THEME=millennium'
+    }
+    resp = session.post(url=url)
     print(resp.status_code)
     resp_json = json.loads(resp.content.decode())
     print(resp_json)
