@@ -32,8 +32,9 @@ services:
     environment:
       - TZ=Asia/Shanghai
     expose:
-      - 9999
-    # volumes:
-    #   - ./configs:/var/lib/scubot
-    #   - ./nonebot:/root/nonebot/
+      - 8080
+    ports:
+      - 8080:9999
+    volumes:
+      - ./bilibili-helper:/data/bilibili-helper
     command: python3 bot.py

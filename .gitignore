@@ -132,3 +132,8 @@ data/
 
 .vscode/
 *.jpg
+*.png
+
+# bilibili-helper/
+# bilibot/
+test_bh.py

@@ -3,6 +3,7 @@ import nonebot
 import sys
 sys.path.append('/var/lib/scubot')
 
+
 try:
     import config
 except:
@@ -14,4 +15,5 @@ if __name__ == '__main__':
         path.join(path.dirname(__file__), 'plugins'),
         'plugins'
     )
-    nonebot.run()
+    bot = nonebot.get_bot()
+    bot.run()
