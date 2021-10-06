@@ -13,11 +13,19 @@ async def handler_on_message(event: aiocqhttp.Event):
     await register.handler_register(bot, event)
 
 
-# @bot.asgi.route('/query_log', methods=['GET'])
-# @route_cors(allow_origin=['*'])
-# async def query_code():
-#     code = request.args.get('code', '')
-#     ret_log = await redis_utils.get_log(code)
-#     if ret_log:
-#         return ret_log
-#     return 'Not Found'
+@nonebot.on_request('friend')
+async def _(session: nonebot.RequestSession):
+    if '7355608' in session.event.comment:
+        await session.approve()
+        return
+    await session.reject('验证失败')
+
+
+@nonebot.scheduler.scheduled_job('cron', hours=7, jitter=120)
+async def handler_timer():
+    all_config = await register.get_all_config()
+    # debug
+    await bot.send_private_msg(user_id=765892480, message=str(all_config))
+    
+    for econfig in all_config:
+        await register.exec_config(bot, econfig[:-5])

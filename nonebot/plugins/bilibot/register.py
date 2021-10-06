@@ -12,7 +12,12 @@ from . import redis_utils
 
 base_dir = '/data/bilibili-helper'
 pattern_log = re.compile('20.*main - ')
-log_host = 'https://bili.netfly.app/#/log?code='
+log_host = 'https://bili.netlify.app/#/log?code='
+
+
+async def get_all_config() -> list:
+    list_dir = list(filter(lambda x: len(x) > 5 and x[-5:] == '.json', os.listdir(base_dir)))
+    return list_dir
 
 
 async def check_config_exist(qq_key: str) -> bool:
