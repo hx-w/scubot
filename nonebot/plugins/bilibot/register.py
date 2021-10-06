@@ -2,13 +2,17 @@
 
 import os
 import re
+import time
 import subprocess
 import json
 import aiocqhttp
 import nonebot
 
+from . import redis_utils
+
 base_dir = '/data/bilibili-helper'
 pattern_log = re.compile('20.*main - ')
+log_host = 'https://bili.netfly.app/#/log?code='
 
 
 async def check_config_exist(qq_key: str) -> bool:
@@ -22,15 +26,22 @@ async def exec_config(bot: nonebot.NoneBot, qq_key: str):
     exe = subprocess.Popen(__command, shell=True,
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     await bot.send_private_msg(user_id=int(qq_key), message="即将开始执行B站签到脚本...请耐心等待")
+    _tstart: float = time.time()
     ret, _ = exe.communicate()
     status = exe.wait()
-    if status == 0:
-        await bot.send_private_msg(user_id=int(qq_key), message="执行成功")
-    else:
-        await bot.send_private_msg(user_id=int(qq_key), message="执行失败")
-    retlines = ret.decode('utf-8').split('\n')
-    for line in retlines:
-        print(re.sub(pattern_log, '', line))
+    _tend: float = time.time()
+    _cmin = int(_tend - _tstart) // 60
+    _csec = int(_tend - _tstart) % 60
+    message = "【执行成功】"
+    if status != 0:
+        message = "【执行失败】"
+    message += f'耗时{_cmin}分{_csec}秒\n详细日志：'
+    # save log
+    retlines = ret.decode('utf-8')
+    retlines = re.sub(pattern_log, '', retlines).encode('utf-8')
+    code = f'{qq_key}-{int(time.time())}'
+    await redis_utils.save_log(code, retlines)
+    await bot.send_private_msg(user_id=int(qq_key), message=message + log_host + code)
 
 
 async def save_config(qq_key: str, config_dict: dict) -> bool:
