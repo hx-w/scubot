@@ -1,7 +1,5 @@
 from os import path
-import sys
 import nonebot
-sys.path.append('/var/lib/scubot')
 
 
 try:

@@ -137,3 +137,5 @@ data/
 # bilibili-helper/
 # bilibot/
 test_bh.py
+*.crt
+*.pem

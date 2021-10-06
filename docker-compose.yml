@@ -32,9 +32,22 @@ services:
     environment:
       - TZ=Asia/Shanghai
     expose:
-      - 8080
-    ports:
-      - 8080:9999
+      - 9999
+    depends_on:
+      - redis
     volumes:
       - ./bilibili-helper:/data/bilibili-helper
+      - ./certfiles:/data/certfiles
     command: python3 bot.py
+
+  api:
+    build: ./api
+    restart: always
+    container_name: api
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis
+    volumes:
+      - ./certfiles:/data/certfiles
+    command: python3 server.py
